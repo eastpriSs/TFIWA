@@ -188,7 +188,7 @@ void Menu::draw_menu(RenderWindow* win)
     // Параметры:
     cmr.reset(sf::FloatRect(0,0,500,340));
     
-    sf::Clock cl; // Счетчик милисекунд
+    sf::Clock cl; // Счетчик миллисекунд
     short anim_time;
     bool isDialogNeed = false;
     
@@ -201,7 +201,7 @@ void Menu::draw_menu(RenderWindow* win)
                 win->close();
         }
 
-        // Получаем милисекунды
+        // Получаем миллисекунды
         anim_time = cl.getElapsedTime().asMilliseconds();
 
         // Серые линии сверху, снизу
@@ -288,7 +288,7 @@ void Menu::draw_menu(RenderWindow* win)
         win->display();
 
         // Обнуляем таймеры:
-        if ( anim_time > 600) cl.restart(); // После каждых anim_time милисекунд 
+        if ( anim_time > 600) cl.restart(); // После каждых anim_time миллисекунд 
     }
 }
 
