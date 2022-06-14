@@ -24,23 +24,55 @@ namespace MENU_PRIVATE // Закрытый, для разработки
 
 namespace MENU_INTERFACE // Открытый, для пользователя 
 {
+
     using sf::RenderWindow;
     using ALLOCATOR::Allocator;
+    using DialogManager::CenterDialog;
+    using DialogManager::UpperDialog;
+    using DialogManager::DownDialog;
 
-    class Menu
-    {
+class Menu
+{
     
-    public:
-        Menu(short);
-        ~Menu();
-        
-        void draw_menu(RenderWindow* );
+public:
 
-    private:
-        Allocator    _alloc;
-        short        _current_lvl;
-        bool         _is_shape_move_back;
-        void _take_memory();
-    };
+    Menu(short);
+    ~Menu();
+        
+void draw_menu(RenderWindow* );
+
+private:
+
+    sf::Event event;
+    
+    sf::View cmr; // Камера за игроком
+
+    // Линии сверху и снизу экрана
+    sf::RectangleShape *upper_frame_display = new sf::RectangleShape(sf::Vector2f(800, 20));
+    sf::RectangleShape *down_frame_display  = new sf::RectangleShape(sf::Vector2f(800, 20));
+
+    // Игрок
+    MainCharacter *mnc = new MainCharacter("image/Lamp.png", 20,300);
+    
+
+    // Диалоги
+    CenterDialog *cntr_d = new CenterDialog;
+    UpperDialog  *uppr_d = new UpperDialog;
+    DownDialog   *down_d = new DownDialog;
+            
+    // Память
+    Allocator    *_alloc =  new Allocator;
+            
+
+    sf::Clock cl; // Счетчик милисекунд
+    short anim_time;
+    bool isDialogNeed = false;
+
+    short        _current_lvl;
+    bool         _is_shape_move_back;
+    void _take_memory();
+
+
+};
 
 } // Menu
