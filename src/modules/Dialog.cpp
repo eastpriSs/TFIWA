@@ -45,8 +45,7 @@ CenterDialog::~CenterDialog()
 UpperDialog& UpperDialog::operator=(const UpperDialog& rhs)
 {
     // Проверка на присваивание самому себе
-    if ( this == &rhs )
-        throw std::invalid_argument("UpperDialog::operator= (rhs = rhs)");
+    if ( this == &rhs ) return *this;
     
     this->txt = rhs.txt;
     this->fnt = rhs.fnt;
