@@ -39,22 +39,33 @@ void save_cfg()
 
 // ;
 
+void display_menu(sf::RenderWindow& w)
+{
+    using MENU_INTERFACE::Menu;
+
+    Menu *m = new Menu(1);
+    m->draw_menu(&w);
+}
+
 int main()
 {
     
     using sf::RenderWindow;
-    using MENU_INTERFACE::Menu;
     
     // Х-ка окна:
         const short height = 630;  
         const short width  = 340;
         RenderWindow window(sf::VideoMode(height, width),
                                 "testV1");
-        Menu m(1);
     // ;
 
     // Главный цикл:
-        m.draw_menu(&window);
+        display_menu(window);
     //;
+<<<<<<< HEAD
+}
+
+=======
     // getchar();
 }
+>>>>>>> ac670d4779cb40c21ed6e2951c622b76019ec4c1

@@ -12,6 +12,9 @@
 
 #include <SFML/Graphics.hpp>
 #include "D:\WORKONIT\cpp_experience\The_forest_in_which_we_will_all___V1.0\src\modules\Allocator.h"
+#include "D:\WORKONIT\cpp_experience\The_forest_in_which_we_will_all___V1.0\src\modules\MainCharacter.h"
+#include "D:\WORKONIT\cpp_experience\The_forest_in_which_we_will_all___V1.0\src\modules\Dialog.h"
+
 
 namespace MENU_PRIVATE // Закрытый, для разработки
 { 
@@ -30,17 +33,14 @@ namespace MENU_INTERFACE // Открытый, для пользователя
     public:
         Menu(short);
         ~Menu();
-
-        void take_memory();
+        
         void draw_menu(RenderWindow* );
 
     private:
-        RenderWindow _win;
         Allocator    _alloc;
         short        _current_lvl;
-        bool        _is_shape_move_back;
-        _lvl_next();
-
+        bool         _is_shape_move_back;
+        void _take_memory();
     };
 
 } // Menu
