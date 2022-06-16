@@ -67,6 +67,27 @@ private:
     sf::Clock cl; // Счетчик милисекунд
     short anim_time;
     bool isDialogNeed = false;
+    
+    // Разные места на карте, представленны кординатами x
+    const unsigned short _left_wall = 20; /* Невидимая 
+                                            стена */
+
+    const unsigned short _right_wall = 1270; /* Невидимая 
+                                            стена */
+
+    // Области действия скриптов
+    const unsigned short _viol_area_start  = 320;                                              
+    const unsigned short _viol_area_end    = 350;
+
+    const unsigned short _near_table_start = 1050;                                              
+    const unsigned short _near_table_end   = 1130;
+
+    const unsigned short _table_start      = 1200;                                              
+    const unsigned short _table_end        = 1270;
+
+    const unsigned short _anim_delay       = 600; 
+
+    enum AREAS{ VIOL = 1, NEAR_TABLE = 2, TABEL = 3};
 
     short        _current_lvl;
     bool         _is_shape_move_back;

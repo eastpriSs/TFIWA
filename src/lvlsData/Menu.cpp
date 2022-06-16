@@ -166,6 +166,7 @@ void Menu::draw_menu(RenderWindow* win)
     // Главный цикл игры:
     while (win->isOpen())
     {
+        // Закрытие окна
         while (win->pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
@@ -208,8 +209,8 @@ void Menu::draw_menu(RenderWindow* win)
         mnc->control();
 
         // Избижать выход за карту
-        if ( mnc->x() == 20 ) mnc->move_right(); // Если дошли до левого предела
-        if (mnc->x() == 1270) mnc->move_left();  // Если дошли до правого предела
+        if ( mnc->x() == _left_wall ) mnc->move_right(); // Если дошли до левого предела
+        if ( mnc->x() == _right_wall ) mnc->move_left();  // Если дошли до правого предела
         // --------------------------
 
         // Камера за игроком
@@ -219,37 +220,37 @@ void Menu::draw_menu(RenderWindow* win)
 
         // Диалоги
         
-        // Скрипач
-        if ( mnc->x() > 320 && mnc->x() < 350 ) 
+        // Скрипач _viol_area
+        if ( mnc->x() > _viol_area_start && mnc->x() < _viol_area_end ) 
         {
-            uppr_d->create_text(L"1", mnc->x(), 0);
-            down_d->create_text(L"2", mnc->x()-25, 320);
+            uppr_d->create_text(L"Здравствуй, Я Оскар. Могу играть хоть вечность.",
+                                                        mnc->x(), 0);
+            down_d->create_text(L"Нажать Е\b , чтобы прибавить громкость в игре.", 
+                                                        mnc->x()-25, 320);
             isDialogNeed = true;
         }
-        // Позиция не дойдя до стола
-        else if(mnc->x() > 1050 && mnc->x() < 1130) 
+        // Позиция не дойдя до стола _near_table
+        else if(mnc->x() > _near_table_start && mnc->x() < _near_table_end) 
         {
-            uppr_d->create_text(L"3", 
-                                mnc->x()-25, 0);  
-            down_d->create_text(L"");                                                                                              
+            uppr_d->create_text(L"Конец музыки и утомление дождя. До сих пор ли стоит там этот скрипач?", 
+                                                        mnc->x()-25, 0);  
+            down_d->create_text(L"");                                                                                          
             isDialogNeed = true;
         } 
-        //  Позиция у стола // AREA 3
-        else if (mnc->x() > 1200 && mnc->x() < 1270) 
+        //  Позиция у стола  _table
+        else if (mnc->x() > _table_start && mnc->x() < _table_end) 
         {
-            uppr_d->create_text(L"... Апраам", 
-                                mnc->x()-65, 0);                                                                
-            down_d->create_text(L"Нажать Е ... ", mnc->x()-50, 320);
-            
+            uppr_d->create_text(L"Вот и конец твоим скитаниям, Апраам, не пора ли их поведать нам?", 
+                                                        mnc->x()-65, 0);                                                                
+            down_d->create_text(L"Нажать Е , чтобы взяться за текст", mnc->x()-50, 320);
             // Ждем нажатия (ВЫХОД С УРОВНЯ)
-            if (wait_button(3)) return; 
+            if (wait_button(TABEL)) return; 
             isDialogNeed = true;
         }
         else // В любом другом месте
         {
             isDialogNeed = false;
         }
-        
 
         if (isDialogNeed) // Отрисока диалогов, если нужно
         {
@@ -260,13 +261,15 @@ void Menu::draw_menu(RenderWindow* win)
         win->display();
 
         // Обнуляем таймеры:
-        if ( anim_time > 600) cl.restart(); // После каждых anim_time милисекунд 
+        if ( anim_time > _anim_delay) cl.restart(); // После каждых _anim_delay милисекунд 
     }
 }
 
 Menu::~Menu()
 {  
-    std::cout << sizeof(cl) + sizeof(event) + sizeof(cmr) << '\n';
+    // Очитка памяти.
+    // Заполнено 45.5
+    // После 41.
     delete mnc;
     delete down_d;
     delete uppr_d;
