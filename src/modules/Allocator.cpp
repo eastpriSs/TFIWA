@@ -8,11 +8,13 @@ Object_map::Object_map(const std::string& lnk,
                        const short pos_x,
                        const short pos_y 
 )
+: _sprite_scale(new sf::Vector2f(1,1))
 {
     img->loadFromFile(lnk);
     tex->loadFromImage(*img);
     spr->setTexture(*tex);
     spr->setPosition(pos_x, pos_y);
+    spr->setScale(*_sprite_scale);
 
     // Сохраняем изначальное положение спрайта
     _origin_position_sprite[0] = pos_x;
@@ -84,9 +86,21 @@ void Object_map::set_frames_animation(short frames,
    this->_animation_type = 2; 
 }
 
+
+// Сохранение аргументов и парамторов при анимации resize
+void Object_map::set_resize_animation( )
+{
+   this->_animation_type = 3; 
+}
+
+
 // Будет использована в постоянном цикле
 void Object_map::play_animation(short delay, const short tme)
 {
+    using sf::Vector2f;
+
+    static bool is_small = false;
+
     switch ( this->_animation_type )
     {
        
@@ -94,7 +108,7 @@ void Object_map::play_animation(short delay, const short tme)
     case 1: 
             spr->move(_dir->first, _dir->second );
             // Если достиг конечной точки
-            if (spr->getPosition() == sf::Vector2f(_end->first, _end->second))
+            if (spr->getPosition() == Vector2f(_end->first, _end->second))
                 spr->setPosition(_origin_position_sprite[0],
                                  _origin_position_sprite[1] );
     break;
@@ -112,6 +126,23 @@ void Object_map::play_animation(short delay, const short tme)
                 set_texture_rect(_sz_rect->first, _sz_rect->second);
                 
     break;
+
+    // Изменение размера
+    case 3:
+        if (*_sprite_scale == sf::Vector2f(0.97,0.97))
+            is_small = true;
+    
+        if (*_sprite_scale == Vector2f(0.995,0.995)) {
+            is_small = false;
+            *_sprite_scale = Vector2f(1, 1);
+        }    
+
+        spr->setScale(Vector2f(*_sprite_scale));    
+        
+        if (is_small) *_sprite_scale += Vector2f(0.005, 0.005); 
+            else *_sprite_scale -= Vector2f(0.01, 0.01); 
+
+    break;
     
     default: return;
     
@@ -127,6 +158,7 @@ Object_map::~Object_map()
     delete img;
     delete tex;
     delete spr;  
+    delete _sprite_scale;
 }
 
 Allocator::Allocator()

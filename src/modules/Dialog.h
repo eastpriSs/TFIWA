@@ -13,6 +13,8 @@ operator= определен один раз в качестве пробы.
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#pragma once
+
 namespace DialogManager
 {
 
@@ -27,15 +29,16 @@ class CenterDialog
 public:
 
 // По умолчанию текст располагается по центру
-void create_text(const std::wstring&, 
+void create_text(const std::wstring&&, 
             const short x = 40, const short y = 170);
 
 void set_font(const std::string&);
-
+ 
 virtual ~CenterDialog();
 
 // Будет спользована в цикле
 inline const Text& txt_var(){ return *txt; }
+inline Text& get_txt_var()  { return *txt; }
 
 private:
 

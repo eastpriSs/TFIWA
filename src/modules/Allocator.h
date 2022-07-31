@@ -18,6 +18,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#pragma once 
 namespace ALLOCATOR_PRIVATE
 {
 
@@ -53,10 +54,12 @@ public:
     void set_frames_animation(short, 
                               const pair<short,short>& );
 
+    void set_resize_animation();
+
     // Проигрывает анимацию
     // Первй - задержка секунд между анимациями
     // Второй аргумент милисекунды
-    void play_animation(const short, const short);
+    void play_animation(const short dalay = 0, const short tme = 0);
 
     ~Object_map();
     // operator new(); // Нужно перегрузить
@@ -80,9 +83,12 @@ private:
     //                  0 - не указан
     unsigned short _animation_type = 0;
     
+    sf::Vector2f *_sprite_scale;
+    
     void  _save_texture_rect(const short, short y = 0);
     short _last_position_tex_rect[2]{0,0};
     short _origin_position_sprite[2]{0,0};
+    
 
 };    
 

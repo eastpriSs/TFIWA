@@ -15,9 +15,11 @@
 #include <SFML/Graphics.hpp> // Для создания окна
 // #include <fstream>           // Сохранение информации о прошлом запуске 
 #include <iostream>          // string
+#include <memory>
 
 // Сценарий: 
 #include "lvlsData/Menu.h"
+#include "lvlsData/Lvl_1.h"
 // ;
 
 // Вспомогательные процессы, предикаты
@@ -39,33 +41,51 @@ void save_cfg()
 
 // ;
 
-void display_menu(sf::RenderWindow& w)
+// Можно сделать аргументом лвл, который нужно
+// запустить, но красивее пожалуй будет смотреться
+// так...
+void display_lvl_one(const short height = 630,  
+        const short width  = 340)
+{
+    using LVL_ONE::lvl_1;
+
+    std::unique_ptr<sf::RenderWindow> w( 
+                new sf::RenderWindow(
+                                sf::VideoMode(height, width),
+                                "testV1",
+                                sf::Style::Default ));
+    // Ограничение FPS под уровень.
+    w->setFramerateLimit(30);
+
+    std::unique_ptr<lvl_1> lvl( new lvl_1() );
+    // Главный цикл
+    lvl->draw_menu(*w);
+}
+
+
+void display_menu(const short height = 630,  
+        const short width  = 340)
 {
     using MENU_INTERFACE::Menu;
 
-    Menu *m = new Menu(1);
-    m->draw_menu(&w);
+    std::unique_ptr<sf::RenderWindow> w( 
+                new sf::RenderWindow(
+                                sf::VideoMode(height, width),
+                                "testV1",
+                                sf::Style::Default ));
+    // Ограничение FPS под уровень.
+    w->setFramerateLimit(30);
+
+    std::unique_ptr<Menu> m( new Menu(1) );
+    // Главный цикл
+    m->draw_menu(*w);
 }
 
 int main()
 {
-    
-    using sf::RenderWindow;
-    
-    // Х-ка окна:
-        const short height = 630;  
-        const short width  = 340;
-        RenderWindow window(sf::VideoMode(height, width),
-                                "testV1");
-    // ;
-
     // Главный цикл:
-        display_menu(window);
+        // display_menu();        
+        display_lvl_one();    
     //;
-<<<<<<< HEAD
 }
 
-=======
-    // getchar();
-}
->>>>>>> ac670d4779cb40c21ed6e2951c622b76019ec4c1

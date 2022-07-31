@@ -10,7 +10,7 @@ using namespace DialogManager;
 
 // Параметры
 // Будет использована в цикле
-void CenterDialog::create_text(const std::wstring& str, const short x, 
+void CenterDialog::create_text(const std::wstring&& str, const short x, 
                     const short y )
 {
     // Для поддрежки кириллицы
@@ -45,8 +45,7 @@ CenterDialog::~CenterDialog()
 UpperDialog& UpperDialog::operator=(const UpperDialog& rhs)
 {
     // Проверка на присваивание самому себе
-    if ( this == &rhs )
-        throw std::invalid_argument("UpperDialog::operator= (rhs = rhs)");
+    if ( this == &rhs ) return *this;
     
     this->txt = rhs.txt;
     this->fnt = rhs.fnt;

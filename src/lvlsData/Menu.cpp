@@ -90,31 +90,14 @@ void Menu::_take_memory()
 
 
     // Добаляем в список объектов для отрисовки 
-    _alloc.list_objs_on_map->push_back(std::move(*background));
-    _alloc.list_objs_on_map->push_back(std::move(*npc_violin));
-    _alloc.list_objs_on_map->push_back(std::move(*rain_drops));
-    _alloc.list_objs_on_map->push_back(std::move(*rain));
+    _alloc->list_objs_on_map->push_back(std::move(*background));
+    _alloc->list_objs_on_map->push_back(std::move(*npc_violin));
+    _alloc->list_objs_on_map->push_back(std::move(*rain_drops));
+    _alloc->list_objs_on_map->push_back(std::move(*rain));
 }
 
 
-void set_cmr_view(sf::View& vw, const short x, const short y)
-/* 
-    Предполагается, что камера не всегда будет
-   следовать за игроком, собственно нам нужно
-   убедиться, что при данных координатах игрока
-   нам нужно передвинуть камеру. Как раз для этого
-   создана функция, а не использован напрямую
-   метод setCenter 
-
-*/ 
-{
-    if (x < 250 || x > 1150) return; // Исключаем возможность камера вы ходить за пределы
-    vw.setCenter(x,y-130);
-}
-
-
-void wait_button(const short area, sf::RenderWindow& wn, 
-                ALLOCATOR::Allocator& mmr )
+bool wait_button_on_pos(const short area )
 // При определенных координатах ожидает нажатие
 // соответсвующей клавиши
 // Действие при нажатии определяется сценарием игры
@@ -124,38 +107,23 @@ void wait_button(const short area, sf::RenderWindow& wn,
     switch (area)
     {
     case 3: // Позиция игрока у стола
-        // По сценарию переход на следующий уровень( которого нет)
         if (Keyboard::isKeyPressed(Keyboard::E))
         {
-            for(auto i = mmr.list_objs_on_map->begin(); 
-                        i != mmr.list_objs_on_map->end(); ++i)
-            {
-                i->spr->setRotation(10);
-            }
-            // wn.close();
+            return true;
         }
-
     break;
-    
-    default:
-        break;
     }
+    return false;
 }
 
-void Menu::draw_menu(RenderWindow* win)
+void Menu::draw_menu(RenderWindow& win)
 {
+    using CameraKit::Camera;
     using namespace ALLOCATOR;
     using namespace DialogManager;
 
     // Выделения памяти под объекты на карте
     _take_memory();
-    
-    // Ограничение FPS под уровень.
-    win->setFramerateLimit(30);
-    
-    // Линии сверху и снизу экрана
-    sf::RectangleShape *upper_frame_display = new sf::RectangleShape(sf::Vector2f(800, 20));
-    sf::RectangleShape *down_frame_display  = new sf::RectangleShape(sf::Vector2f(800, 20));
     
     // Параметры:
     upper_frame_display->setPosition(0,0);
@@ -165,15 +133,7 @@ void Menu::draw_menu(RenderWindow* win)
     down_frame_display->setPosition(0,320);
     down_frame_display->setFillColor(sf::Color(25,25,25,255));
     // ------------------------------
-
-    // Игрок
-    MainCharacter *mnc = new MainCharacter("image/Lamp.png", 20,300);
-    // ------------------------------
-
-    // Диалоги
-    CenterDialog *cntr_d = new CenterDialog; // Для фразы в начале уровня
-    UpperDialog  *uppr_d = new UpperDialog;
-    DownDialog   *down_d = new DownDialog;
+    
     
     // Параметры uppr_d:
     uppr_d->set_font("fonts/1.ttf");
@@ -181,31 +141,26 @@ void Menu::draw_menu(RenderWindow* win)
     // Параметры down_d:
     down_d->set_font("fonts/1.ttf");
     // ------------------------------
-
-    sf::Event event;
     
-    sf::View cmr; // Камера за игроком
     // Параметры:
-    cmr.reset(sf::FloatRect(0,0,500,340));
-    
-    sf::Clock cl; // Счетчик милисекунд
-    short anim_time;
-    bool isDialogNeed = false;
-    
+    Camera::reset_review();
+    Camera::set_cmr_locks(0, 1150);
+
     // Главный цикл игры:
-    while (win->isOpen())
+    while (win.isOpen())
     {
-        while (win->pollEvent(event))
+        // Закрытие окна
+        while (win.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
-                win->close();
+                win.close();
         }
 
-        // Получаем милисекунды
+        // Получаем миллисекунды
         anim_time = cl.getElapsedTime().asMilliseconds();
 
         // Серые линии сверху, снизу
-        win->clear(sf::Color(25,25,25,218)); 
+        win.clear(sf::Color(25,25,25,218)); 
 
         /* """"""""""""""""""""""""""
 
@@ -218,80 +173,92 @@ void Menu::draw_menu(RenderWindow* win)
          """""""""""""""""""""""""" */
 
         // Отрисовка объектов на карте 
-        for(auto i = _alloc.list_objs_on_map->begin(); 
-                        i != _alloc.list_objs_on_map->end(); ++i)
+        for(auto i = _alloc->list_objs_on_map->begin(); 
+                        i != _alloc->list_objs_on_map->end(); ++i)
         {
             i->play_animation(600, anim_time); // Задержка
-            win->draw(*i->spr);
+            win.draw(*i->spr);
         }
 
         
         // Отрисовка линий сверху и снизу        
-        win->draw(*upper_frame_display);
-        win->draw(*down_frame_display);
+        win.draw(*upper_frame_display);
+        win.draw(*down_frame_display);
 
         // Игрок
-        win->draw(mnc->get_sprite());
+        win.draw(mnc->get_sprite());
         
         // Отслеживание нажатий клавиш для картинки игрока:
         mnc->control();
 
         // Избижать выход за карту
-        if ( mnc->x() == 20 ) mnc->move_right(); // Если дошли до левого предела
-        if (mnc->x() == 1270) mnc->move_left();  // Если дошли до правого предела
+        if ( mnc->x() == _left_wall ) mnc->move_right(); // Если дошли до левого предела
+        if ( mnc->x() == _right_wall ) mnc->move_left();  // Если дошли до правого предела
         // --------------------------
 
         // Камера за игроком
-        set_cmr_view(cmr, mnc->x(), mnc->y() );
-        win->setView(cmr);
+        Camera::set_cmr_view( mnc->x(), mnc->y() );
+        Camera::init(win);
         //----------------------------
 
         // Диалоги
         
-        // Скрипач
-        if ( mnc->x() > 320 && mnc->x() < 350 ) 
+        // Скрипач _viol_area
+        if ( mnc->x() > _viol_area_start && mnc->x() < _viol_area_end ) 
         {
-            uppr_d->create_text(L"1", mnc->x(), 0);
-            down_d->create_text(L"2", mnc->x()-25, 320);
+            uppr_d->create_text(L"Здравствуй, Я Оскар. Могу играть хоть вечность.",
+                                                        mnc->x(), 0);
+            down_d->create_text(L"Нажать Е\b , чтобы прибавить громкость в игре.", 
+                                                        mnc->x()-25, 320);
             isDialogNeed = true;
         }
-        // Позиция не дойдя до стола
-        else if(mnc->x() > 1050 && mnc->x() < 1130) 
+        // Позиция не дойдя до стола _near_table
+        else if(mnc->x() > _near_table_start && mnc->x() < _near_table_end) 
         {
-            uppr_d->create_text(L"3", 
-                                mnc->x()-25, 0);  
-            down_d->create_text(L"");                                                                                              
+            uppr_d->create_text(L"Конец музыки и утомление дождя. До сих пор ли стоит там этот скрипач?", 
+                                                        mnc->x()-25, 0);  
+            down_d->create_text(L"");                                                                                          
             isDialogNeed = true;
         } 
-        //  Позиция у стола // AREA 3
-        else if (mnc->x() > 1200 && mnc->x() < 1270) 
+        //  Позиция у стола  _table
+        else if (mnc->x() > _table_start && mnc->x() < _table_end) 
         {
-            uppr_d->create_text(L"... Апраам", 
-                                mnc->x()-65, 0);                                                                
-            down_d->create_text(L"Нажать Е ... ", mnc->x()-50, 320);
-            // Ждем нажатия
-            wait_button(3, *win, _alloc); 
+            uppr_d->create_text(L"Вот и конец твоим скитаниям, Апраам, не пора ли их поведать нам?", 
+                                                        mnc->x()-65, 0);                                                                
+            down_d->create_text(L"Нажать Е , чтобы взяться за текст", mnc->x()-50, 320);
+            // Ждем нажатия (ВЫХОД С УРОВНЯ)
+            if (wait_button_on_pos(TABEL)) return; 
             isDialogNeed = true;
         }
         else // В любом другом месте
         {
             isDialogNeed = false;
         }
-        
 
         if (isDialogNeed) // Отрисока диалогов, если нужно
         {
-            win->draw(uppr_d->txt_var());
-            win->draw(down_d->txt_var());
+            win.draw(uppr_d->txt_var());
+            win.draw(down_d->txt_var());
         }
 
-        win->display();
+        win.display();
 
         // Обнуляем таймеры:
-        if ( anim_time > 600) cl.restart(); // После каждых anim_time милисекунд 
+        if ( anim_time > _anim_delay) cl.restart(); // После каждых _anim_delay миллисекунд 
     }
 }
 
 Menu::~Menu()
-{    
+{  
+    // Очитка памяти.
+    // Заполнено 45.5
+    // После 41.
+    
+    delete mnc;
+    delete down_d;
+    delete uppr_d;
+    delete cntr_d;
+    delete _alloc->list_objs_on_map;
+    delete _alloc;  
+    
 }

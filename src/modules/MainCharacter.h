@@ -14,6 +14,8 @@ using sf::Image;
 using sf::Texture;
 using sf::Sprite;
 
+#pragma once
+
 class MainCharacter
 {
 
@@ -44,7 +46,7 @@ private:
     void _change_x(const short& m);
     void _change_y(const short& m);
 
-    short move_speed = 5;
+    short move_speed = 20;
 
     Image   *img = new Image;
     Texture *tex = new Texture;
