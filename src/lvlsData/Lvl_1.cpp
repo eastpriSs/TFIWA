@@ -122,6 +122,48 @@ inline void lvl_1::_clear_map()
                             _alloc->list_objs_on_map->end());
 }
 
+const short lvl_1::_check_area_player() 
+// Отслеживание игрока по карте
+{ 
+    if ( mnc->x() > _house_door_area_s && 
+         mnc->x() < _house_door_area_e    )
+    {
+        return AREAS::HOUSE_DOOR;
+    }
+    else {
+        return AREAS::UNTITLED;
+    }
+}
+
+void lvl_1::_check_active()
+{
+    switch (_check_area_player())
+    {
+    
+    case AREAS::HOUSE_DOOR:
+        down_d->create_text(L"Нажать Е..", mnc->x(), 320);
+        if (LvlFunc::wait_button_on_pos(AREAS::HOUSE_DOOR))
+        {
+            _clear_map();   
+            _make_house_inside();
+            CameraKit::Camera::set_cmr_locks(1700, 2200);
+        }
+    break;
+    
+    }    
+}
+
+inline void lvl_1::_draw_objects( sf::RenderWindow& win) {
+// Отрисовка объектов на карте 
+    for(auto i = _alloc->list_objs_on_map->begin();
+                i != _alloc->list_objs_on_map->end(); ++i)
+    {
+        i->play_animation();
+        win.draw(*i->spr);
+
+    }// Поледний объект(фильтер) упускается, так как, он должен быть выше игрока    
+}
+
 void lvl_1::draw_menu(sf::RenderWindow& win)
 {
     using CameraKit::Camera;
@@ -151,39 +193,11 @@ void lvl_1::draw_menu(sf::RenderWindow& win)
 
         win.clear(sf::Color(25,25,25,218)); 
 
-        // Отрисовка объектов на карте 
-        for(auto i = _alloc->list_objs_on_map->begin();
-                i != _alloc->list_objs_on_map->end(); ++i)
-        {
-            i->play_animation();
-            win.draw(*i->spr);
-
-        }// Поледний объект(фильтер) упускается, так как, он должен быть выше игрока
-
-
-        // Отслеживание игрока по карте 
-        if ( mnc->x() > _house_door_area_s && 
-             mnc->x() < _house_door_area_e    )
-        {
-            down_d->create_text(L"Нажать Е ..", mnc->x()-1, 320);
-
-            if (LvlFunc::wait_button_on_pos(HOUSE_DOOR))
-            {
-                _clear_map();   
-                _make_house_inside();
-                Camera::set_cmr_locks(1700, 2200);
-            }
-
-            isDialogNeed = true;
-        }
-        else
-        {
-            isDialogNeed = false;
-        }
+        _draw_objects(win);
         
-        
-        if (isDialogNeed) // Отрисока диалогов, если нужно
+        if (_check_area_player()) // Отрисока диалогов, если нужно
         {
+            _check_active();
             win.draw(uppr_d->txt_var());
             win.draw(down_d->txt_var());
         }
@@ -207,5 +221,5 @@ void lvl_1::draw_menu(sf::RenderWindow& win)
 
 lvl_1::~lvl_1()
 {
-
+    delete _alloc;
 }

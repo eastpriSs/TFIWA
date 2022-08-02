@@ -20,7 +20,7 @@
 namespace LVL1_PRIVATE
 {
 
-class LvlFunc
+class LvlFunc // ??
 {
 
 public:
@@ -61,10 +61,13 @@ namespace LVL_ONE
         
         MainCharacter *mnc = new MainCharacter("image/Lamp.png", 20,300);
 
-        void _play_intro(sf::RenderWindow&);
-        void _take_memory();        
-        void _make_house_inside();
-        void _clear_map();   
+        void        _draw_objects( sf::RenderWindow& );
+        const short _check_area_player();
+        void        _play_intro(sf::RenderWindow&);
+        void        _take_memory();        
+        void        _make_house_inside();
+        void        _clear_map();   
+        void        _check_active();
 
         // Areas
         const short _house_door_area_s = 1700;
@@ -72,6 +75,7 @@ namespace LVL_ONE
 
 
         enum AREAS{
+            UNTITLED   = 0,
             HOUSE_DOOR = 3
         };
 
