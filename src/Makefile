@@ -7,8 +7,8 @@
 
 all: compile link clean-obj
 
-compile: lvlsData/Menu.h lvlsData/Lvl_1.h modules/MainCharacter.h modules/Allocator.h modules/Dialog.h modules/Camera.h
-	g++ -I LIBS/include -c Main.cpp lvlsData/Menu.cpp lvlsData/Lvl_1.cpp modules/MainCharacter.cpp modules/Allocator.cpp modules/Dialog.cpp modules/Camera.cpp
+compile: lvlsData/Menu.h lvlsData/Lvl_1.h modules/MainCharacter.h modules/Allocator.h modules/Dialog.h modules/Camera.h modules/Script.h
+	g++ -I LIBS/include -c Main.cpp lvlsData/Menu.cpp lvlsData/Lvl_1.cpp modules/MainCharacter.cpp modules/Allocator.cpp modules/Dialog.cpp modules/Camera.cpp modules/Script.cpp
 
 #------------------ Имена -------------------------------------------------------------------
 exe-name := Main # Исправить, также добавить ярлык
@@ -20,7 +20,7 @@ dll-link := D:\WORKONIT\cpp_experience\The_forest_in_which_we_will_all___V1.0\dl
 #--------------------------------------------------------------------------------------------------
 
 #------------------ Список объектных ------------------
-obj-files := Main.o Lvl_1.o Menu.o MainCharacter.o Allocator.o Dialog.o Camera.o
+obj-files := Main.o Lvl_1.o Menu.o MainCharacter.o Allocator.o Dialog.o Camera.o Script.o
 #--------------------------------------------------------------------------------------------------
 
 

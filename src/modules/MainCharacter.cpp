@@ -12,6 +12,7 @@
 
 MainCharacter::MainCharacter(const std::string& lnk, const short pos_x,
                                 const short pos_y)
+: money(140)
 {
     // Создание спрайта и размещение на координаты
     img->loadFromFile(lnk);
@@ -39,18 +40,15 @@ void MainCharacter::_change_y(const short& m)
 // Перемещение спрайта
 void MainCharacter::move_left()
 {   
-    spr->rotate(-10);
     spr->move(-move_speed,0); 
     _change_x(-move_speed);   
 }
 
 void MainCharacter::move_right()
 {   
-    spr->rotate(10);
     spr->move(move_speed,0);   
     _change_x(move_speed);    
 }
-
 
 // Отслеживание нажатых клавиш
 // Будет использована в главном цикле

@@ -39,6 +39,9 @@ public:
 
     // Изменение значений
     void set_x(const short) noexcept;
+	void set_speed(const short) noexcept;
+
+    short money;
 
 private:
 
@@ -56,11 +59,11 @@ private:
           _y = 0;
 };
 
-inline const short MainCharacter::x() const{
+inline const short MainCharacter::x() const {
     return _x;
 }
 
-inline const short MainCharacter::y() const{
+inline const short MainCharacter::y() const {
     return _y;
 }
 
@@ -73,3 +76,11 @@ inline void MainCharacter::set_x(const short m) noexcept
 {
     _x = m; 
 }
+
+
+inline void MainCharacter::set_speed(const short s) noexcept
+{
+	move_speed = s;
+}
+
+
