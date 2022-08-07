@@ -2,13 +2,14 @@
 
 using namespace LVL_ONE;
 
-lvl_1::lvl_1()
+lvl_1::lvl_1() // 25,25,25,218
+: win_back_clr(26,67,50,255)
 {
     main_filter->setPosition(_near_table_s-300, 0); // Изначально
     main_filter->setFillColor(sf::Color(243,110,1,0));
 }
 
-void lvl_1::_take_memory()
+void lvl_1::_make_outside()
 {
     using ALLOCATOR::Object_map;
     // 1400x300
@@ -67,7 +68,7 @@ void lvl_1::_play_intro(sf::RenderWindow& w )
         Script::visibility(cntr_d->get_txt_var(), transparency);
         transparency -= 3; 
 
-        w.clear(sf::Color(0,0,0,255));
+        w.clear(win_back_clr);
         w.draw(cntr_d->txt_var());
         w.display();
     }
@@ -134,63 +135,84 @@ void lvl_1::_check_active()
     static short stage_dialog    = 1; 
     const short transparency     = 200;
 
-    switch (_check_area_player())
-    {
-    
-    case AREAS::HOUSE_DOOR:
-        down_d->create_text(L"Нажать Е..", mnc->x(), 320);
-        if ( Script::is_pressed_E() )
+    // Только если в обычном сценарии
+    // для финального свои инструкции
+    if (_final_stage == false) {
+        
+        switch (_check_area_player())
         {
-            _clear_map();   
-            _make_house_inside();
-            CameraKit::Camera::set_cmr_locks(1700, 2200);
-        }
-    break;
-    
-    case AREAS::HOUSE_UNTITLED:
-        uppr_d->create_text(L"И тут ворвался Апраам, но кто тебя звал?", mnc->x(), 0);
-    break;
-
-	case AREAS::NEAR_TABLE:
-		mnc->set_speed(0); // Останавливаем персонажа
-  
-        if (stage_dialog == 2)
-        {
-            if ( Script::is_pressed_F() ) 
-                uppr_d->create_text(L"Зачем ты клонишь диалог к лести? Я же знаю. Уходи отсюда, слышишь меня? Вон. Я тебе дам денег, раз уж так надо.", mnc->x()-100, 0);
-            
-            else if ( Script::is_pressed_E() ) {
-                uppr_d->create_text(L"Человек-льстец виртуозен и самовлюблен. Уходи отсюда, слышишь меня? Вон. Я тебе дам денег, раз уж так надо.", mnc->x()-100, 0);
-                mnc->money -= 70;
+        
+        case AREAS::HOUSE_DOOR:
+            down_d->create_text(L"Нажать Е..", mnc->x(), 320);
+            if ( Script::is_pressed_E() )
+            {
+                _clear_map();   
+                _make_house_inside();
+                CameraKit::Camera::set_cmr_locks(1700, 2200);
             }
-            down_d->create_text(L"Спасибо, пап..", mnc->x()-70, 320);
-
-            _n_play_clip = true; // Проиграть клип  
-            stage_dialog = 3;    
-        }
-        else if (stage_dialog == 1) 
-        { 
-            uppr_d->create_text(L"Ты что-то забыл Апраам?", mnc->x()-30, 0);
-            
-            Script::visibility(down_d->get_txt_var(), transparency);	
-            Script::set_color(down_d->get_txt_var(), 60,60,60);
-            
-            down_d->create_text(L"[E] Мне нужно извиниться перед вами. \t [F] Я забыл сказать спасибо вам.", mnc->x()-70, 320);     
-        }
-
-        if ( (Script::is_pressed_E()  || 
-              Script::is_pressed_F()) && 
-              stage_dialog == 1 ) stage_dialog = 2;
+        break;
         
-        if ( Script::is_pressed_E() && stage_dialog == 0 )  stage_dialog = 1;
-        
-    break;
+        case AREAS::HOUSE_UNTITLED:
+            uppr_d->create_text(L"И тут ворвался Апраам, но кто тебя звал?", mnc->x(), 0);
+        break;
 
-    }    
+        case AREAS::NEAR_TABLE:
+            
+            if (!_final_stage) // Костыль(
+                mnc->set_speed(0); // Останавливаем персонажа
+    
+            if (stage_dialog == 2)
+            {
+                if ( Script::is_pressed_F() ) 
+                    uppr_d->create_text(L"Зачем ты клонишь диалог к лести? Я же знаю. Уходи отсюда, слышишь меня? Вон. Я тебе дам денег, раз уж так надо.", mnc->x()-100, 0);
+                
+                else if ( Script::is_pressed_E() ) {
+                    uppr_d->create_text(L"Человек-льстец виртуозен и самовлюблен. Уходи отсюда, слышишь меня? Вон. Я тебе дам денег, раз уж так надо.", mnc->x()-100, 0);
+                    mnc->money -= 70;
+                }
+                down_d->create_text(L"Спасибо, пап..", mnc->x()-70, 320);
+
+                _n_play_clip = true; // Проиграть клип  
+                stage_dialog = 3;    
+            }
+            else if (stage_dialog == 1) 
+            { 
+                uppr_d->create_text(L"Ты что-то забыл Апраам?", mnc->x()-30, 0);
+                
+                Script::visibility(down_d->get_txt_var(), transparency);	
+                Script::set_color(down_d->get_txt_var(), 60,60,60);
+                
+                down_d->create_text(L"[E] Мне нужно извиниться перед вами. \t [F] Я забыл сказать спасибо вам.", mnc->x()-70, 320);     
+            }
+
+            if ( (Script::is_pressed_E()  || 
+                Script::is_pressed_F()) && 
+                stage_dialog == 1 ) stage_dialog = 2;
+            
+            if ( Script::is_pressed_E() && stage_dialog == 0 )  stage_dialog = 1;
+            
+        break;
+
+        }    
+    }
+}
+
+void lvl_1::_final_stage_script()
+{
+    static short transparency_objs = 0;
+    mnc->set_speed(mnc->default_speed);
+    // Выполняем один раз
+    if ( _alloc->list_objs_on_map->empty() )
+        _make_outside();
+    
+    objects_visidility = transparency_objs;
+    
+    if (transparency_objs < 100)
+        transparency_objs++;     
 }
 
 // Используется в цикле
-inline void lvl_1::_play_clip() 
+void lvl_1::_play_clip() 
 {
     using ScriptModule::Script;
     
@@ -206,9 +228,10 @@ inline void lvl_1::_play_clip()
     {
    
     case 250:
+        mnc->set_x(2200);
         Script::repaint_white(uppr_d->get_txt_var());
         Script::visibility(uppr_d->get_txt_var(), 255);
-        Script::visibility(down_d->get_txt_var(), 140);
+        Script::visibility(down_d->get_txt_var(), 0);
         uppr_d->create_text(
         L"..Брат выгоняет взгядом меня, Отец спроваживает словом!\nИз раза в раз спотыкаюсь от боли. \nПадаю, утопаю, во мрак недовольства собою.\nЯ ничего им не сделал плохого...\n\n\n\t\tОтрывок из \"Монструозность\" 1965г. автор: Ночь(урожд. Неер) Апраам М.", mnc->x()-50, 140);
     break;
@@ -231,6 +254,7 @@ inline void lvl_1::_play_clip()
         _clear_map(); 
         transparency_rect = 0;
         _n_play_clip = false;
+        _final_stage = true;
     }
 }
 
@@ -239,6 +263,9 @@ inline void lvl_1::_draw_objects( sf::RenderWindow& win) {
     for(auto i = _alloc->list_objs_on_map->begin();
                 i != _alloc->list_objs_on_map->end(); ++i)
     {
+        if (objects_visidility != 255) 
+            ScriptModule::Script::visibility(*i->spr, objects_visidility );
+
         i->play_animation();
         win.draw(*i->spr);
 
@@ -252,7 +279,7 @@ void lvl_1::draw_menu(sf::RenderWindow& win)
     // _play_intro(win);
     
     // Объекты
-    _take_memory();
+    _make_outside();
 
     // Камера
     Camera::init(win);   
@@ -273,7 +300,7 @@ void lvl_1::draw_menu(sf::RenderWindow& win)
                 win.close();
         }
 
-        win.clear(sf::Color(25,25,25,218)); 
+        win.clear(win_back_clr); 
 
         _draw_objects(win);
         
@@ -301,6 +328,12 @@ void lvl_1::draw_menu(sf::RenderWindow& win)
         { 
             _play_clip();
             win.draw(*main_filter);
+        }
+
+        if (_final_stage)
+        {
+            CameraKit::Camera::set_cmr_locks(20,2260);
+            _final_stage_script();
         }
 
         win.display();

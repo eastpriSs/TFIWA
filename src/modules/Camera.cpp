@@ -11,8 +11,8 @@ void Camera::init( sf::RenderWindow& w ) {
     w.setView(cmr);
 }
 
-void Camera::reset_review( const sf::FloatRect& rv  ) {
-    cmr.reset(rv);
+void Camera::reset_review( const sf::FloatRect& rv  ) { 
+    cmr.reset();
 }
 
 void Camera::set_cmr_view(const short& x, const short& y) 

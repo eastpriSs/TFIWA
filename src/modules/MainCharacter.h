@@ -42,6 +42,7 @@ public:
 	void set_speed(const short) noexcept;
 
     short money;
+    const short default_speed = 20;
 
 private:
 

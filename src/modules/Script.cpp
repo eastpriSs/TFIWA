@@ -35,3 +35,11 @@ void Script::set_color(sf::Sprite& obj, short&& r,
 {
     obj.setColor(sf::Color(r,g,b, obj.getColor().a));                   
 }
+
+void Script::visibility(sf::Sprite& obj, const short& trns)
+{
+    obj.setColor(sf::Color(   obj.getColor().r, 
+                              obj.getColor().g, 
+                              obj.getColor().b,
+                              trns ));
+}

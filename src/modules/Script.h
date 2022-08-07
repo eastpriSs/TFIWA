@@ -34,6 +34,8 @@ namespace ScriptModule
         template<typename T>
         static void visibility(T&, const short&);
 
+        static void visibility(sf::Sprite&, const short&);
+
         template<typename T>
         static void repaint_white(T&);
 

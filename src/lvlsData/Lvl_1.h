@@ -45,10 +45,11 @@ namespace LVL_ONE
         RectangleShape *main_filter = new RectangleShape(sf::Vector2f(700,340));  
         MainCharacter  *mnc         = new MainCharacter("image/Lamp.png", 20,300);
 
+        void        _final_stage_script();
         void        _draw_objects( sf::RenderWindow& );
         const short _check_area_player();
         void        _play_intro(sf::RenderWindow&);
-        void        _take_memory();        
+        void        _make_outside();        
         void        _make_house_inside();
         void        _clear_map();   
         void        _check_active();
@@ -63,6 +64,10 @@ namespace LVL_ONE
 		const short _near_table_s 	   = 2100;
 		const short _near_table_e 	   = 2260;
 
+        short objects_visidility = 50;
+        sf::Color win_back_clr;
+
+        bool _final_stage = false;
         bool _n_play_clip = false;
 
         enum AREAS{
